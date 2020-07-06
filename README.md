@@ -58,7 +58,6 @@ func main() {
 			"error": true,
 			"message": "I'm receiving error with inline error data",
 		}
-		f.Data = mp
 		f.WithError(c, mp).Redirect("/error-redirect")
 	})
 
@@ -67,7 +66,6 @@ func main() {
 			"success": true,
 			"message": "I'm receiving success with inline success data",
 		}
-		f.Data = mp
 		f.WithSuccess(c, mp).Redirect("/success-redirect")
 	})
 
