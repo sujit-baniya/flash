@@ -18,7 +18,7 @@ func (f *Flash) Error(c *fiber.Ctx) {
 	var flashValue string
 	f.Data["error"] = true
 	for key, value := range f.Data {
-		flashValue += "\x00" + key + ":" + fmt.Sprintf("%s", value) + "\x00"
+		flashValue += "\x00" + key + ":" + fmt.Sprintf("%v", value) + "\x00"
 	}
 	c.Cookie(&fiber.Cookie{
 		Name:  f.CookiePrefix + "-Flash",
