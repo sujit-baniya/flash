@@ -46,9 +46,8 @@ func (f *Flash) Get(c *fiber.Ctx) {
 			t[key] = val
 		})
 		f.Data = t
-		c.Set("Set-Cookie", f.CookiePrefix+"-Flash=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; HttpOnly")
 	}
-
+	c.Set("Set-Cookie", f.CookiePrefix+"-Flash=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; HttpOnly")
 }
 
 // ParseKeyValueCookie takes the raw (escaped) cookie value and parses out key values.
