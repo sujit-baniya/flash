@@ -18,39 +18,59 @@ import (
 )
 
 func main() {
-    app := fiber.New()
+	app := fiber.New()
 
-    f := flash.Flash{
-        CookiePrefix:"Test-Prefix",
-    }
-    app.Get("/success-redirect", func (c *fiber.Ctx) {
-        f.Get(c)
-        c.JSON(f.Data)
-    })
+	f := flash.Flash{
+		CookiePrefix:"Test-Prefix",
+	}
+	app.Get("/success-redirect", func (c *fiber.Ctx) {
+		f.Get(c)
+		c.JSON(f.Data)
+	})
 
-    app.Get("/success", func (c *fiber.Ctx) {
-        mp := fiber.Map{
-            "success": true,
-            "message": "I'm receiving success",
-        }
-        c.Redirect("/success-redirect")
-    })
+	app.Get("/success", func (c *fiber.Ctx) {
+		mp := fiber.Map{
+			"success": true,
+			"message": "I'm receiving success",
+		}
+		f.Data = mp
+		f.Success(c)
+		c.Redirect("/success-redirect")
+	})
 
-    app.Get("/error-redirect", func (c *fiber.Ctx) {
-        f.Get(c)
-        c.JSON(f.Data)
-    })
+	app.Get("/error-redirect", func (c *fiber.Ctx) {
+		f.Get(c)
+		c.JSON(f.Data)
+	})
 
-    app.Get("/error", func (c *fiber.Ctx) {
-        mp := fiber.Map{
-            "error": true,
-            "message": "I'm receiving error",
-        }
-        f.Data = mp
-        f.Error(c)
-        c.Redirect("/error-redirect")
-    })
+	app.Get("/error", func (c *fiber.Ctx) {
+		mp := fiber.Map{
+			"error": true,
+			"message": "I'm receiving error",
+		}
+		f.Data = mp
+		f.Error(c)
+		c.Redirect("/error-redirect")
+	})
 
-    app.Listen(3000)
+	app.Get("/error-with-data", func (c *fiber.Ctx) {
+		mp := fiber.Map{
+			"error": true,
+			"message": "I'm receiving error with inline error data",
+		}
+		f.Data = mp
+		f.WithError(c, mp).Redirect("/error-redirect")
+	})
+
+	app.Get("/success-with-data", func (c *fiber.Ctx) {
+		mp := fiber.Map{
+			"success": true,
+			"message": "I'm receiving success with inline success data",
+		}
+		f.Data = mp
+		f.WithError(c, mp).Redirect("/success-redirect")
+	})
+
+	app.Listen(3000)
 }
 ```

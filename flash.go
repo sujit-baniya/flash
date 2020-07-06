@@ -60,3 +60,26 @@ func ParseKeyValueCookie(val string, cb func(key string, val interface{})) {
 		}
 	}
 }
+
+func (f *Flash) Redirect(c *fiber.Ctx, location string, data interface{}, status ...int) {
+
+	f.Data = data.(fiber.Map)
+	if len(status) > 0 {
+		c.Redirect(location, status[0])
+	} else {
+		c.Redirect(location, fiber.StatusFound)
+	}
+
+}
+
+func (f *Flash) WithError(c *fiber.Ctx, data fiber.Map) *fiber.Ctx {
+	f.Data = data
+	f.Error(c)
+	return c
+}
+
+func (f *Flash) WithSuccess(c *fiber.Ctx, data fiber.Map) *fiber.Ctx {
+	f.Data = data
+	f.Success(c)
+	return c
+}
