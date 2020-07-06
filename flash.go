@@ -30,7 +30,7 @@ func (f *Flash) Success(c *fiber.Ctx) {
 	var flashValue string
 	f.Data["success"] = true
 	for key, value := range f.Data {
-		flashValue += "\x00" + key + ":" + value.(string) + "\x00"
+		flashValue += "\x00" + key + ":" + fmt.Sprintf("%v", value) + "\x00"
 	}
 	c.Cookie(&fiber.Cookie{
 		Name:  f.CookiePrefix + "-Flash",
@@ -40,6 +40,7 @@ func (f *Flash) Success(c *fiber.Ctx) {
 
 func (f *Flash) Get(c *fiber.Ctx) {
 	t := fiber.Map{}
+	f.Data = nil
 	cookieValue := c.Cookies(f.CookiePrefix + "-Flash")
 	if cookieValue != "" {
 		ParseKeyValueCookie(cookieValue, func(key string, val interface{}) {
