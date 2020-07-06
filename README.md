@@ -68,7 +68,7 @@ func main() {
 			"message": "I'm receiving success with inline success data",
 		}
 		f.Data = mp
-		f.WithError(c, mp).Redirect("/success-redirect")
+		f.WithSuccess(c, mp).Redirect("/success-redirect")
 	})
 
 	app.Listen(3000)
