@@ -38,7 +38,7 @@ func (f *Flash) Success(c *fiber.Ctx) {
 	})
 }
 
-func (f *Flash) Get(c *fiber.Ctx) {
+func (f *Flash) Get(c *fiber.Ctx) fiber.Map {
 	t := fiber.Map{}
 	f.Data = nil
 	cookieValue := c.Cookies(f.CookiePrefix + "-Flash")
@@ -49,6 +49,7 @@ func (f *Flash) Get(c *fiber.Ctx) {
 		f.Data = t
 	}
 	c.Set("Set-Cookie", f.CookiePrefix+"-Flash=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; HttpOnly")
+	return f.Data
 }
 
 // ParseKeyValueCookie takes the raw (escaped) cookie value and parses out key values.
