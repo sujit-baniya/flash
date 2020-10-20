@@ -1,4 +1,4 @@
-module github.com/itsursujit/flash
+module github.com/sujit-baniya/flash
 
 go 1.15
 

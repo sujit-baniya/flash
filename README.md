@@ -4,7 +4,7 @@ This package is build to send the flash messages on the top of Gofiber
 
 ## Installation
 The package can be used to validate the data and send flash message to other route.
-> go get github.com/itsursujit/flash
+> go get github.com/sujit-baniya/flash
 
 
 ## Usage
@@ -14,7 +14,7 @@ package main
 
 import (
     "github.com/gofiber/fiber"
-    "github.com/itsursujit/flash"
+    "github.com/sujit-baniya/flash"
 )
 
 func main() {
