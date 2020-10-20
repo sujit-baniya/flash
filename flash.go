@@ -2,7 +2,7 @@ package flash
 
 import (
 	"fmt"
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 	"net/url"
 	"regexp"
 )
@@ -61,15 +61,14 @@ func ParseKeyValueCookie(val string, cb func(key string, val interface{})) {
 	}
 }
 
-func (f *Flash) Redirect(c *fiber.Ctx, location string, data interface{}, status ...int) {
+func (f *Flash) Redirect(c *fiber.Ctx, location string, data interface{}, status ...int) error {
 
 	f.Data = data.(fiber.Map)
 	if len(status) > 0 {
-		c.Redirect(location, status[0])
+		return c.Redirect(location, status[0])
 	} else {
-		c.Redirect(location, fiber.StatusFound)
+		return c.Redirect(location, fiber.StatusFound)
 	}
-
 }
 
 func (f *Flash) WithError(c *fiber.Ctx, data fiber.Map) *fiber.Ctx {
