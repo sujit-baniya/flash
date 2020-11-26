@@ -13,7 +13,7 @@ The package can be used to validate the data and send flash message to other rou
 package main
 
 import (
-    "github.com/gofiber/fiber"
+    "github.com/gofiber/fiber/v2"
     "github.com/sujit-baniya/flash"
 )
 
@@ -23,50 +23,50 @@ func main() {
 	f := flash.Flash{
 		CookiePrefix:"Test-Prefix",
 	}
-	app.Get("/success-redirect", func (c *fiber.Ctx) {
+	app.Get("/success-redirect", func (c *fiber.Ctx) error {
 		f.Get(c)
-		c.JSON(f.Data)
+		return c.JSON(f.Data)
 	})
 
-	app.Get("/success", func (c *fiber.Ctx) {
+	app.Get("/success", func (c *fiber.Ctx) error {
 		mp := fiber.Map{
 			"success": true,
 			"message": "I'm receiving success",
 		}
 		f.Data = mp
 		f.Success(c)
-		c.Redirect("/success-redirect")
+		return c.Redirect("/success-redirect")
 	})
 
-	app.Get("/error-redirect", func (c *fiber.Ctx) {
+	app.Get("/error-redirect", func (c *fiber.Ctx) error {
 		f.Get(c)
-		c.JSON(f.Data)
+		return c.JSON(f.Data)
 	})
 
-	app.Get("/error", func (c *fiber.Ctx) {
+	app.Get("/error", func (c *fiber.Ctx) error {
 		mp := fiber.Map{
 			"error": true,
 			"message": "I'm receiving error",
 		}
 		f.Data = mp
 		f.Error(c)
-		c.Redirect("/error-redirect")
+		return c.Redirect("/error-redirect")
 	})
 
-	app.Get("/error-with-data", func (c *fiber.Ctx) {
+	app.Get("/error-with-data", func (c *fiber.Ctx) error {
 		mp := fiber.Map{
 			"error": true,
 			"message": "I'm receiving error with inline error data",
 		}
-		f.WithError(c, mp).Redirect("/error-redirect")
+		return f.WithError(c, mp).Redirect("/error-redirect")
 	})
 
-	app.Get("/success-with-data", func (c *fiber.Ctx) {
+	app.Get("/success-with-data", func (c *fiber.Ctx) error {
 		mp := fiber.Map{
 			"success": true,
 			"message": "I'm receiving success with inline success data",
 		}
-		f.WithSuccess(c, mp).Redirect("/success-redirect")
+		return f.WithSuccess(c, mp).Redirect("/success-redirect")
 	})
 
 	app.Listen(3000)
