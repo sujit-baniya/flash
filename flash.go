@@ -8,20 +8,20 @@ import (
 )
 
 type Flash struct {
-	cookiePrefix string
+	CookiePrefix string
 	data         fiber.Map
 }
 
 var DefaultFlash = &Flash{
-	cookiePrefix: "Fiber-App",
+	CookiePrefix: "Fiber-App",
 	data:         fiber.Map{},
 }
 
 var cookieKeyValueParser = regexp.MustCompile("\x00([^:]*):([^\x00]*)\x00")
 
-func New(cookiePrefix string) {
+func New(CookiePrefix string) {
 	DefaultFlash = &Flash{
-		cookiePrefix: cookiePrefix,
+		CookiePrefix: CookiePrefix,
 		data:         fiber.Map{},
 	}
 }
@@ -29,14 +29,14 @@ func New(cookiePrefix string) {
 func (f *Flash) Get(c *fiber.Ctx) fiber.Map {
 	t := fiber.Map{}
 	f.data = nil
-	cookieValue := c.Cookies(f.cookiePrefix + "-Flash")
+	cookieValue := c.Cookies(f.CookiePrefix + "-Flash")
 	if cookieValue != "" {
 		parseKeyValueCookie(cookieValue, func(key string, val interface{}) {
 			t[key] = val
 		})
 		f.data = t
 	}
-	c.Set("Set-Cookie", f.cookiePrefix+"-Flash=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; HttpOnly")
+	c.Set("Set-Cookie", f.CookiePrefix+"-Flash=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; HttpOnly")
 	return f.data
 }
 
@@ -78,7 +78,7 @@ func (f *Flash) setCookie(c *fiber.Ctx) {
 		flashValue += "\x00" + key + ":" + fmt.Sprintf("%v", value) + "\x00"
 	}
 	c.Cookie(&fiber.Cookie{
-		Name:  f.cookiePrefix + "-Flash",
+		Name:  f.CookiePrefix + "-Flash",
 		Value: url.QueryEscape(flashValue),
 	})
 }
