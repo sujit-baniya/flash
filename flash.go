@@ -13,7 +13,7 @@ type Flash struct {
 }
 
 var DefaultFlash = &Flash{
-	CookiePrefix: "Verify-Rest",
+	CookiePrefix: "Fiber-App",
 	Data:         fiber.Map{},
 }
 
@@ -143,6 +143,16 @@ func WithError(c *fiber.Ctx, data fiber.Map) *fiber.Ctx {
 func WithSuccess(c *fiber.Ctx, data fiber.Map) *fiber.Ctx {
 	DefaultFlash.Data = data
 	DefaultFlash.Success(c)
+	return c
+}
+
+func SetData(c *fiber.Ctx, data fiber.Map) fiber.Map {
+	DefaultFlash.Data = data
+	return data
+}
+
+func WithData(c *fiber.Ctx, data fiber.Map) *fiber.Ctx {
+	DefaultFlash.Data = data
 	return c
 }
 
