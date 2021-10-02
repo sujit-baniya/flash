@@ -37,6 +37,9 @@ func (f *Flash) Get(c *fiber.Ctx) fiber.Map {
 		f.data = t
 	}
 	c.Set("Set-Cookie", f.CookiePrefix+"-Flash=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; HttpOnly")
+	if f.data == nil {
+		f.data = fiber.Map{}
+	}
 	return f.data
 }
 
