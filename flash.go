@@ -2,9 +2,10 @@ package flash
 
 import (
 	"fmt"
-	"github.com/gofiber/fiber/v2"
 	"net/url"
 	"regexp"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 type Flash struct {
@@ -12,15 +13,20 @@ type Flash struct {
 	data         fiber.Map
 }
 
-var DefaultFlash = &Flash{
-	CookiePrefix: "Fiber-App",
-	data:         fiber.Map{},
+var DefaultFlash *Flash
+
+func init() {
+	Default("Fiber-App")
 }
 
 var cookieKeyValueParser = regexp.MustCompile("\x00([^:]*):([^\x00]*)\x00")
 
-func New(CookiePrefix string) {
-	DefaultFlash = &Flash{
+func Default(CookiePrefix string) {
+	DefaultFlash = New(CookiePrefix)
+}
+
+func New(CookiePrefix string) *Flash {
+	return &Flash{
 		CookiePrefix: CookiePrefix,
 		data:         fiber.Map{},
 	}
