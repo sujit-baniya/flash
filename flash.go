@@ -50,12 +50,29 @@ func (f *Flash) Get(c *fiber.Ctx) fiber.Map {
 }
 
 func (f *Flash) Redirect(c *fiber.Ctx, location string, data interface{}, status ...int) error {
-
 	f.data = data.(fiber.Map)
 	if len(status) > 0 {
 		return c.Redirect(location, status[0])
 	} else {
 		return c.Redirect(location, fiber.StatusFound)
+	}
+}
+
+func (f *Flash) RedirectToRoute(c *fiber.Ctx, routeName string, data fiber.Map, status ...int) error {
+	f.data = data
+	if len(status) > 0 {
+		return c.RedirectToRoute(routeName, data, status[0])
+	} else {
+		return c.RedirectToRoute(routeName, data, fiber.StatusFound)
+	}
+}
+
+func (f *Flash) RedirectBack(c *fiber.Ctx, fallback string, data fiber.Map, status ...int) error {
+	f.data = data
+	if len(status) > 0 {
+		return c.RedirectBack(fallback, status[0])
+	} else {
+		return c.RedirectBack(fallback, fiber.StatusFound)
 	}
 }
 
@@ -97,7 +114,15 @@ func Get(c *fiber.Ctx) fiber.Map {
 }
 
 func Redirect(c *fiber.Ctx, location string, data interface{}, status ...int) error {
-	return DefaultFlash.Redirect(c, location, data)
+	return DefaultFlash.Redirect(c, location, data, status...)
+}
+
+func RedirectToRoute(c *fiber.Ctx, routeName string, data fiber.Map, status ...int) error {
+	return DefaultFlash.RedirectToRoute(c, routeName, data, status...)
+}
+
+func RedirectBack(c *fiber.Ctx, fallback string, data fiber.Map, status ...int) error {
+	return DefaultFlash.RedirectBack(c, fallback, data, status...)
 }
 
 func WithError(c *fiber.Ctx, data fiber.Map) *fiber.Ctx {
