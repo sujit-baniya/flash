@@ -35,14 +35,14 @@ func New(CookiePrefix string) *Flash {
 func (f *Flash) Get(c *fiber.Ctx) fiber.Map {
 	t := fiber.Map{}
 	f.data = nil
-	cookieValue := c.Cookies(f.CookiePrefix + "-Flash")
+	cookieValue := c.Cookies(f.CookiePrefix + "-flash")
 	if cookieValue != "" {
 		parseKeyValueCookie(cookieValue, func(key string, val interface{}) {
 			t[key] = val
 		})
 		f.data = t
 	}
-	c.Set("Set-Cookie", f.CookiePrefix+"-Flash=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; HttpOnly")
+	c.Set("Set-Cookie", f.CookiePrefix+"-flash=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; HttpOnly; SameSite=None")
 	if f.data == nil {
 		f.data = fiber.Map{}
 	}
@@ -104,8 +104,9 @@ func (f *Flash) setCookie(c *fiber.Ctx) {
 		flashValue += "\x00" + key + ":" + fmt.Sprintf("%v", value) + "\x00"
 	}
 	c.Cookie(&fiber.Cookie{
-		Name:  f.CookiePrefix + "-Flash",
-		Value: url.QueryEscape(flashValue),
+		Name:     f.CookiePrefix + "-flash",
+		Value:    url.QueryEscape(flashValue),
+		SameSite: "None",
 	})
 }
 
