@@ -88,6 +88,18 @@ func (f *Flash) WithSuccess(c *fiber.Ctx, data fiber.Map) *fiber.Ctx {
 	return c
 }
 
+func (f *Flash) WithWarn(c *fiber.Ctx, data fiber.Map) *fiber.Ctx {
+	f.data = data
+	f.warn(c)
+	return c
+}
+
+func (f *Flash) WithInfo(c *fiber.Ctx, data fiber.Map) *fiber.Ctx {
+	f.data = data
+	f.info(c)
+	return c
+}
+
 func (f *Flash) error(c *fiber.Ctx) {
 	f.data["error"] = true
 	f.setCookie(c)
@@ -95,6 +107,16 @@ func (f *Flash) error(c *fiber.Ctx) {
 
 func (f *Flash) success(c *fiber.Ctx) {
 	f.data["success"] = true
+	f.setCookie(c)
+}
+
+func (f *Flash) warn(c *fiber.Ctx) {
+	f.data["warn"] = true
+	f.setCookie(c)
+}
+
+func (f *Flash) info(c *fiber.Ctx) {
+	f.data["info"] = true
 	f.setCookie(c)
 }
 
@@ -132,6 +154,14 @@ func WithError(c *fiber.Ctx, data fiber.Map) *fiber.Ctx {
 
 func WithSuccess(c *fiber.Ctx, data fiber.Map) *fiber.Ctx {
 	return DefaultFlash.WithSuccess(c, data)
+}
+
+func WithWarn(c *fiber.Ctx, data fiber.Map) *fiber.Ctx {
+	return DefaultFlash.WithWarn(c, data)
+}
+
+func WithInfo(c *fiber.Ctx, data fiber.Map) *fiber.Ctx {
+	return DefaultFlash.WithInfo(c, data)
 }
 
 func WithData(c *fiber.Ctx, data fiber.Map) *fiber.Ctx {
