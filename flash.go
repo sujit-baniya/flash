@@ -4,45 +4,64 @@ import (
 	"fmt"
 	"net/url"
 	"regexp"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 type Flash struct {
-	CookiePrefix string
-	data         fiber.Map
+	data   fiber.Map
+	config Config
+}
+
+type Config struct {
+	Name        string    `json:"name"`
+	Value       string    `json:"value"`
+	Path        string    `json:"path"`
+	Domain      string    `json:"domain"`
+	MaxAge      int       `json:"max_age"`
+	Expires     time.Time `json:"expires"`
+	Secure      bool      `json:"secure"`
+	HTTPOnly    bool      `json:"http_only"`
+	SameSite    string    `json:"same_site"`
+	SessionOnly bool      `json:"session_only"`
 }
 
 var DefaultFlash *Flash
 
 func init() {
-	Default("Fiber-App")
+	Default(Config{
+		Name: "fiber-app-flash",
+	})
 }
 
 var cookieKeyValueParser = regexp.MustCompile("\x00([^:]*):([^\x00]*)\x00")
 
-func Default(CookiePrefix string) {
-	DefaultFlash = New(CookiePrefix)
+func Default(config Config) {
+	DefaultFlash = New(config)
 }
 
-func New(CookiePrefix string) *Flash {
+func New(config Config) *Flash {
+	if config.SameSite == "" {
+		config.SameSite = "Lax"
+	}
 	return &Flash{
-		CookiePrefix: CookiePrefix,
-		data:         fiber.Map{},
+		config: config,
+		data:   fiber.Map{},
 	}
 }
 
 func (f *Flash) Get(c *fiber.Ctx) fiber.Map {
 	t := fiber.Map{}
 	f.data = nil
-	cookieValue := c.Cookies(f.CookiePrefix + "-flash")
+	cookieValue := c.Cookies(f.config.Name)
 	if cookieValue != "" {
 		parseKeyValueCookie(cookieValue, func(key string, val interface{}) {
 			t[key] = val
 		})
 		f.data = t
 	}
-	c.Set("Set-Cookie", f.CookiePrefix+"-flash=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; HttpOnly; SameSite=None")
+	c.Set("Set-Cookie", f.config.Name+"=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; HttpOnly; SameSite="+f.config.SameSite)
 	if f.data == nil {
 		f.data = fiber.Map{}
 	}
@@ -126,9 +145,16 @@ func (f *Flash) setCookie(c *fiber.Ctx) {
 		flashValue += "\x00" + key + ":" + fmt.Sprintf("%v", value) + "\x00"
 	}
 	c.Cookie(&fiber.Cookie{
-		Name:     f.CookiePrefix + "-flash",
-		Value:    url.QueryEscape(flashValue),
-		SameSite: "None",
+		Name:        f.config.Name,
+		Value:       url.QueryEscape(flashValue),
+		SameSite:    f.config.SameSite,
+		Secure:      f.config.Secure,
+		Path:        f.config.Path,
+		Domain:      f.config.Domain,
+		MaxAge:      f.config.MaxAge,
+		Expires:     f.config.Expires,
+		HTTPOnly:    f.config.HTTPOnly,
+		SessionOnly: f.config.SessionOnly,
 	})
 }
 
