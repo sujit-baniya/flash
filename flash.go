@@ -119,6 +119,12 @@ func (f *Flash) WithInfo(c *fiber.Ctx, data fiber.Map) *fiber.Ctx {
 	return c
 }
 
+func (f *Flash) WithData(c *fiber.Ctx, data fiber.Map) *fiber.Ctx {
+	f.data = data
+	f.setCookie(c)
+	return c
+}
+
 func (f *Flash) error(c *fiber.Ctx) {
 	f.data["error"] = true
 	f.setCookie(c)
@@ -191,8 +197,7 @@ func WithInfo(c *fiber.Ctx, data fiber.Map) *fiber.Ctx {
 }
 
 func WithData(c *fiber.Ctx, data fiber.Map) *fiber.Ctx {
-	DefaultFlash.data = data
-	return c
+	return DefaultFlash.WithData(c, data)
 }
 
 // parseKeyValueCookie takes the raw (escaped) cookie value and parses out key values.
