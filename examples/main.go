@@ -32,5 +32,12 @@ func main() {
 		return flash.WithSuccess(c, mp).Redirect("/success-redirect")
 	})
 
+	app.Get("/data", func(c *fiber.Ctx) error {
+		mp := fiber.Map{
+			"text": "Received arbitrary data",
+		}
+		return flash.WithData(c, mp).Redirect("/success-redirect")
+	})
+
 	app.Listen(":8080")
 }
